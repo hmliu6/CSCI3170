@@ -9,10 +9,15 @@ public class LoadData
 {
 public static void main(String[] args) throws FileNotFoundException
 {
-	load_data_category();
-	load_data_user();
-	load_data_book_and_author();
-	load_data_checkout_record();
+    String st = "hi ";
+
+    st += "hihi ";
+    System.out.println(st);
+
+	// load_data_category();
+	// load_data_user();
+	// load_data_book_and_author();
+	// load_data_checkout_record();
     
 }
 
@@ -34,14 +39,38 @@ public static void main(String[] args) throws FileNotFoundException
 
     */
 
+
+    /* 
+    Example 
+
+      System.out.println("Inserting records into the table...");
+      stmt = conn.createStatement();
+      
+      String sql = "INSERT INTO Registration " +
+                   "VALUES (100, 'Zara', 'Ali', 18)";
+      stmt.executeUpdate(sql);
+      sql = "INSERT INTO Registration " +
+                   "VALUES (101, 'Mahnaz', 'Fatma', 25)";
+      stmt.executeUpdate(sql);
+      sql = "INSERT INTO Registration " +
+                   "VALUES (102, 'Zaid', 'Khan', 30)";
+      stmt.executeUpdate(sql);
+      sql = "INSERT INTO Registration " +
+                   "VALUES(103, 'Sumit', 'Mittal', 28)";
+      stmt.executeUpdate(sql);
+      System.out.println("Inserted records into the table...");
+     */
+
+
     /* load test data for table: category */
     public static void load_data_category() throws FileNotFoundException {
-
+    
     File file = new File("category.txt");
     Scanner sc = new Scanner(file);
+    String data_string;
+
     while (sc.hasNextLine())
-      sc.useDelimiter("\\Z");
-      System.out.println(sc.nextLine());
+        System.out.println(sc.nextLine());
     }
 
     /* load test data for table: User */
