@@ -16,6 +16,11 @@ docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=test centurylink/mysql
 # Port number = 3306
 # username = root, password = test
 ```
+OR
+```bash
+bash javaSQL/hostMySQL.sh
+# By default, localhost:3306 , username = root , password = test
+```
 
 To kill container after testing, check container ID by `docker container ls`
 
