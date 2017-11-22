@@ -11,9 +11,9 @@ public class JavaSQL {
     public static void main(String[] args) {
         // TODO code application logic here
         Connection conn = null;
-        String url = "jdbc:mysql://appsrvdb.cse.cuhk.edu.hk/CSCI3170S10";
-        String username = "CSCI3170S10";
-        String password = "csci3170Project!";
+        String url = "jdbc:mysql://localhost:3306";
+        String username = "root";
+        String password = "test";
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
