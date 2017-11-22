@@ -63,14 +63,29 @@ public static void main(String[] args) throws FileNotFoundException
 
 
     /* load test data for table: category */
-    public static void load_data_category() throws FileNotFoundException {
-    
+   public static void load_data_category() throws FileNotFoundException {
+
     File file = new File("category.txt");
     Scanner sc = new Scanner(file);
-    String data_string;
+    String[] data; 
+    data = new data[3]; 
+    int counter = 0;
 
-    while (sc.hasNextLine())
-        System.out.println(sc.nextLine());
+    PreparedStatement ps = conn.prepareStatement("INSERT INTO category (id, loan_period, max_books) VALUES(?, ?, ?);");
+
+    while (sc.hasNextLine()){
+        sc.nextLine();
+        sc.split("\t");
+        while(sc != null){
+            data[counter++] = sc;
+        }
+        ps.setString(data[0],data[1],data[2]);
+    }
+    
+    ps.execute();
+
+
+    return;
     }
 
     /* load test data for table: User */
