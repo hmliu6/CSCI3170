@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import java.util.Scanner;
 
@@ -15,6 +16,8 @@ public class JavaSQL {
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
+            testfunc(conn);
+            main_menu();
             conn.close();
         }
         catch (SQLException ex){
@@ -26,7 +29,6 @@ public class JavaSQL {
         catch (Exception exp){
           System.out.println("Exception: " + exp.getMessage());
         }
-        main_menu();
     }
 
     public static void main_menu(){
@@ -119,4 +121,12 @@ public class JavaSQL {
         librarian_operation();
     }
 
+    public static void testfunc(Connection conn){
+      try{
+        Statement stmt = conn.createStatement();
+      }
+      catch (Exception exp){
+        System.out.println("Exception: " + exp.getMessage());
+      }
+    }
 }
