@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 21, 2017 at 12:27 PM
+-- Generation Time: Nov 27, 2017 at 02:36 PM
 -- Server version: 10.1.24-MariaDB
 -- PHP Version: 7.1.6
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `author` (
   `name` text NOT NULL,
-  `call_number` int(10) UNSIGNED NOT NULL
+  `call_number` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -40,7 +40,7 @@ CREATE TABLE `author` (
 --
 
 CREATE TABLE `book` (
-  `call_number` int(11) UNSIGNED NOT NULL,
+  `call_number` text NOT NULL,
   `title` text NOT NULL,
   `publish_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -65,7 +65,7 @@ CREATE TABLE `category` (
 
 CREATE TABLE `checkout_record` (
   `user_id` int(10) UNSIGNED NOT NULL,
-  `call_number` int(10) UNSIGNED NOT NULL,
+  `call_number` text NOT NULL,
   `copy_number` int(10) UNSIGNED NOT NULL,
   `checkout_date` date NOT NULL,
   `return_date` date NOT NULL
@@ -78,7 +78,7 @@ CREATE TABLE `checkout_record` (
 --
 
 CREATE TABLE `copy` (
-  `call_number` int(11) UNSIGNED NOT NULL,
+  `call_number` text NOT NULL,
   `copy_number` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -89,7 +89,7 @@ CREATE TABLE `copy` (
 --
 
 CREATE TABLE `user` (
-  `id` int(11) UNSIGNED NOT NULL,
+  `id` text NOT NULL,
   `name` text NOT NULL,
   `address` text NOT NULL,
   `category_id` int(11) UNSIGNED NOT NULL
@@ -103,14 +103,14 @@ CREATE TABLE `user` (
 -- Indexes for table `author`
 --
 ALTER TABLE `author`
-  ADD PRIMARY KEY (`name`(100),`call_number`),
-  ADD KEY `call_number` (`call_number`);
+  ADD PRIMARY KEY (`name`(100),`call_number`(100)),
+  ADD KEY `call_number` (`call_number`(100));
 
 --
 -- Indexes for table `book`
 --
 ALTER TABLE `book`
-  ADD PRIMARY KEY (`call_number`);
+  ADD PRIMARY KEY (`call_number`(100));
 
 --
 -- Indexes for table `category`
@@ -122,53 +122,24 @@ ALTER TABLE `category`
 -- Indexes for table `checkout_record`
 --
 ALTER TABLE `checkout_record`
-  ADD PRIMARY KEY (`user_id`,`call_number`,`copy_number`,`checkout_date`),
+  ADD PRIMARY KEY (`user_id`,`call_number`(100),`copy_number`,`checkout_date`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `call_number` (`call_number`),
+  ADD KEY `call_number` (`call_number`(100)),
   ADD KEY `copy_number` (`copy_number`);
 
 --
 -- Indexes for table `copy`
 --
 ALTER TABLE `copy`
-  ADD PRIMARY KEY (`call_number`,`copy_number`),
-  ADD KEY `call_number` (`call_number`);
+  ADD PRIMARY KEY (`call_number`(100),`copy_number`),
+  ADD KEY `call_number` (`call_number`(100));
 
 --
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`id`(100)),
   ADD KEY `category_id` (`category_id`);
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `author`
---
-ALTER TABLE `author`
-  ADD CONSTRAINT `author_ibfk_1` FOREIGN KEY (`call_number`) REFERENCES `book` (`call_number`) ON DELETE NO ACTION ON UPDATE CASCADE;
-
---
--- Constraints for table `checkout_record`
---
-ALTER TABLE `checkout_record`
-  ADD CONSTRAINT `checkout_record_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  ADD CONSTRAINT `checkout_record_ibfk_2` FOREIGN KEY (`call_number`) REFERENCES `copy` (`call_number`) ON DELETE NO ACTION ON UPDATE CASCADE;
-
---
--- Constraints for table `copy`
---
-ALTER TABLE `copy`
-  ADD CONSTRAINT `copy_ibfk_1` FOREIGN KEY (`call_number`) REFERENCES `book` (`call_number`) ON DELETE NO ACTION ON UPDATE CASCADE;
-
---
--- Constraints for table `user`
---
-ALTER TABLE `user`
-  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
