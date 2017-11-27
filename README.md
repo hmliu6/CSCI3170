@@ -1,3 +1,28 @@
+### Connect to CSE CUHK environment
+
+The connection is only establishable in `linux1.cse.cuhk.edu.hk`
+
+1. Copy whole file to cse machine
+```bash
+scp -r javaSQL/ {CSE USERNAME}@gw.cse.cuhk.edu.hk:{DIRECTORY}
+```
+
+2. Modify `JavaSQL.java`
+
+```java
+String url = "jdbc:mysql://appsrvdb.cse.cuhk.edu.hk/CSCI3170S10";
+String username = "CSCI3170S10";
+String password = "csci3170Project!";
+// With equal port number and password in above
+```
+
+3. `make`
+
+4. Run Java application
+```bash
+java -cp .:jdbc.jar JavaSQL
+```
+
 ### Create Local MySQL environment
 
 Using Docker and create own MySQL server for testing
