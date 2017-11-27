@@ -29,12 +29,10 @@ CREATE TABLE checkout_record(
     return_date varchar(10) not null,
     PRIMARY KEY(user_id, call_number, copy_number, checkout_date),
     FOREIGN KEY(user_id) REFERENCES user(user_id),
-    FOREIGN KEY(call_number) REFERENCES book(call_number),
-    FOREIGN KEY(copy_number) REFERENCES copy(copy_number));
+    FOREIGN KEY(call_number, copy_number) REFERENCES copy(call_number, copy_number));
 
 CREATE TABLE author(
     name integer not null,
     call_number integer not null,
     PRIMARY KEY(name, call_number),
-    FOREIGN KEY(call_number) REFERENCES book(call_number)
-);
+    FOREIGN KEY(call_number) REFERENCES book(call_number));
