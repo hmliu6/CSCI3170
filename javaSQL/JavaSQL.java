@@ -5,6 +5,9 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import java.util.Scanner;
 
 
@@ -100,56 +103,43 @@ public class JavaSQL {
       return;
     }
     /* load testdata for table: Category */
-    public static void loadDataCategory(Connection conn) throws FileNotFoundException {
+    public static void loadDataCategory(Connection conn) throws Exception {
       File file = new File("category.txt");
-      Scanner sc = new Scanner(file);
-      String[] data; 
-      data = new data[3]; 
-      int counter = 0;
+      Scanner scan = new Scanner(file);
 
-      PreparedStatement ps = conn.prepareStatement("INSERT INTO category (id, loan_period, max_books) VALUES(?, ?, ?);");
-      while (sc.hasNextLine()){
-        sc.nextLine();
-        sc.split("\t");
-        while(sc != null){
-          data[counter++] = sc;
-        }
-        ps.setString(data[0],data[1],data[2]);
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, loan_period, max_books) VALUES(?, ?, ?);");
+      while (scan.hasNextLine()){
+        String data = scan.nextLine();
+        String[] result = data.split("\t");
+        for(int i=0; i<result.length; i++)
+          pstmt.setString(i+1, result[0]);
       }
-      ps.execute();
+      pstmt.execute();
       System.out.println("Data of Category have been loaded successfully!\n");
       return;
     }
 
     /* load test data for table: User */
-    public static void loadDataUser(Connection conn) throws FileNotFoundException {
+    public static void loadDataUser(Connection conn) throws Exception {
       File file = new File("user.txt");
-      Scanner sc = new Scanner(file);
-      String[] data; 
-      data = new data[4]; 
-      int counter = 0;
+      Scanner scan = new Scanner(file);
 
-      PreparedStatement ps = conn.prepareStatement("INSERT INTO category (id, name, address, category_id) VALUES(?, ?, ?, ?);");
-      while (sc.hasNextLine()){
-        sc.nextLine();
-        sc.split("\t");
-        while(sc != null){
-          data[counter++] = sc;
-        }
-        ps.setString(data[0],data[1],data[2],data[3]);
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, name, address, category_id) VALUES(?, ?, ?, ?);");
+      while (scan.hasNextLine()){
+        String data = scan.nextLine();
+        String[] result = data.split("\t");
+        for(int i=0; i<result.length; i++)
+          pstmt.setString(i+1, result[0]);
       }
-      ps.execute();
+      pstmt.execute();
       System.out.println("Data of User have been loaded successfully!\n");
       return;
     }
 
     /* load test data for tables: Book , Copy and Author*/
-    public static void loadDataBookAndAuthor(Connection conn) throws FileNotFoundException {
+    public static void loadDataBookAndAuthor(Connection conn) throws Exception {
       File file = new File("book.txt");
-      Scanner sc = new Scanner(file);
-      String[] data; 
-      data = new data[3]; 
-      int counter = 0;
+      Scanner scan = new Scanner(file);
 
       PreparedStatement ps_book = conn.prepareStatement("INSERT INTO category (call_number, title, publish_date) VALUES(?, ?, ?);");
       PreparedStatement ps_copy = conn.prepareStatement("INSERT INTO copy (call_number, copy_number) VALUES(?,?);");
@@ -159,11 +149,11 @@ public class JavaSQL {
       }
 
     /* load test data for table: Checkout_record */
-    public static void loadDataCheckoutRecord(Connection conn) throws FileNotFoundException {
+    public static void loadDataCheckoutRecord(Connection conn) throws Exception {
       File file = new File("checkout.txt");
-      Scanner sc = new Scanner(file);
-      while (sc.hasNextLine())
-        System.out.println(sc.nextLine());
+      Scanner scan = new Scanner(file);
+      while (scan.hasNextLine())
+        System.out.println(scan.nextLine());
 
       }
 
