@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 
 import java.util.Scanner;
 
-
 public class JavaSQL {
     public static void main(String[] args) {
         // TODO code application logic here
@@ -90,21 +89,25 @@ public class JavaSQL {
 
     /* Load ALL test data for database */
     public static void LoadData(Connection conn){
+      Scanner scan = new Scanner(System.in);
+      System.out.print("Type in the Source Data Folder Path: ");
+      String path = scan.nextLine();
       try{
-      System.out.println("Processing...\n");
-      loadDataCategory(conn);
-      loadDataUser(conn);
-      loadDataBookAndAuthor(conn);
-      loadDataCheckoutRecord(conn);
-      System.out.println("Data are loaded successfully!\n");}
+        System.out.println("Processing...\n");
+        loadDataCategory(conn, path);
+        loadDataUser(conn, path);
+        loadDataBookAndAuthor(conn, path);
+        loadDataCheckoutRecord(conn, path);
+        System.out.println("Data are loaded successfully!\n");
+      }
       catch(Exception ex){
         System.out.println("Error: " + ex);
       }
       return;
     }
     /* load testdata for table: Category */
-    public static void loadDataCategory(Connection conn) throws Exception{
-      File file = new File("category.txt");
+    public static void loadDataCategory(Connection conn, String path) throws Exception{
+      File file = new File(path + "/" + "category.txt");
       Scanner scan = new Scanner(file);
 
       PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, loan_period, max_books) VALUES (?, ?, ?)");
@@ -120,8 +123,8 @@ public class JavaSQL {
     }
 
     /* load test data for table: User */
-    public static void loadDataUser(Connection conn) throws Exception{
-      File file = new File("user.txt");
+    public static void loadDataUser(Connection conn, String path) throws Exception{
+      File file = new File(path + "/" + "user.txt");
       Scanner scan = new Scanner(file);
 
       PreparedStatement pstmt = conn.prepareStatement("INSERT INTO user (id, name, address, category_id) VALUES (?, ?, ?, ?)");
@@ -137,9 +140,9 @@ public class JavaSQL {
     }
 
     /* load test data for tables: Book, Copy and Author*/
-    public static void loadDataBookAndAuthor(Connection conn) throws Exception{
+    public static void loadDataBookAndAuthor(Connection conn, String path) throws Exception{
       String[] result;
-      File file = new File("book.txt");
+      File file = new File(path + "/" + "book.txt");
       Scanner scan = new Scanner(file);
       PreparedStatement ps_book = conn.prepareStatement("INSERT INTO book (call_number, title, publish_date) VALUES (?, ?, ?)");
       PreparedStatement ps_copy = conn.prepareStatement("INSERT INTO copy (call_number, copy_number) VALUES (?,?)");
@@ -174,13 +177,24 @@ public class JavaSQL {
     }
 
     /* load test data for table: Checkout_record */
-    public static void loadDataCheckoutRecord(Connection conn) throws Exception{
-      File file = new File("checkout.txt");
+    public static void loadDataCheckoutRecord(Connection conn, String path) throws Exception{
+      File file = new File(path + "/" + "checkout.txt");
       Scanner scan = new Scanner(file);
-      while (scan.hasNextLine())
-        System.out.println(scan.nextLine());
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO checkout_record (id, call_number, copy_number, checkout_date, return_date) VALUES (?, ?, ?, ?, ?)");
+      while (scan.hasNextLine()){
+        // checkout.txt: {call_number, copy_number, user_id ,checkout_date, return_date}
+        String data = scan.nextLine();
+        String[] result = data.split("\t");
+        pstmt.setString(1, result[2]);
+        pstmt.setString(2, result[0]);
+        pstmt.setString(3, result[1]);
+        pstmt.setString(4, result[3]);
+        pstmt.setString(5, result[4]);
 
+        pstmt.execute();
       }
+      System.out.println("Data of Checkout Record have been loaded successfully!\n");
+    }
 
     public static void dropAllTable(Connection conn){
       System.out.println("Processing...");
