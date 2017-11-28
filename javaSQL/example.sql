@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS project;
+CREATE DATABASE project;
+USE project;
+
 DROP TABLE IF EXISTS category CASCADE;
 DROP TABLE IF EXISTS user CASCADE;
 DROP TABLE IF EXISTS book CASCADE;
@@ -39,7 +43,7 @@ CREATE TABLE checkout_record(
     FOREIGN KEY(call_number, copy_number) REFERENCES copy(call_number, copy_number));
 
 CREATE TABLE author(
-    name integer not null,
+    name varchar(30) not null,
     call_number integer not null,
     PRIMARY KEY(name, call_number),
     FOREIGN KEY(call_number) REFERENCES book(call_number));
@@ -69,7 +73,7 @@ INSERT INTO copy VALUES (5, 2);
 INSERT INTO copy VALUES (6, 8);
 
 INSERT INTO checkout_record VALUES (1, 2, 1, '22/11/2017', '24/11/2017');
-INSERT INTO checkout_record VALUES (4, 4, 2, '28/11/2017', '29/11/2017');
+INSERT INTO checkout_record VALUES (4, 4, 6, '28/11/2017', '29/11/2017');
 
 INSERT INTO author VALUES ('Peter', 1);
 INSERT INTO author VALUES ('Thunder', 2);
