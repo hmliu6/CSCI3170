@@ -103,11 +103,11 @@ public class JavaSQL {
       return;
     }
     /* load testdata for table: Category */
-    public static void loadDataCategory(Connection conn) throws Exception {
+    public static void loadDataCategory(Connection conn) throws Exception{
       File file = new File("category.txt");
       Scanner scan = new Scanner(file);
 
-      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, loan_period, max_books) VALUES(?, ?, ?);");
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, loan_period, max_books) VALUES (?, ?, ?)");
       while (scan.hasNextLine()){
         String data = scan.nextLine();
         String[] result = data.split("\t");
@@ -120,11 +120,11 @@ public class JavaSQL {
     }
 
     /* load test data for table: User */
-    public static void loadDataUser(Connection conn) throws Exception {
+    public static void loadDataUser(Connection conn) throws Exception{
       File file = new File("user.txt");
       Scanner scan = new Scanner(file);
 
-      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, name, address, category_id) VALUES(?, ?, ?, ?);");
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO user (id, name, address, category_id) VALUES (?, ?, ?, ?)");
       while (scan.hasNextLine()){
         String data = scan.nextLine();
         String[] result = data.split("\t");
@@ -136,20 +136,45 @@ public class JavaSQL {
       return;
     }
 
-    /* load test data for tables: Book , Copy and Author*/
-    public static void loadDataBookAndAuthor(Connection conn) throws Exception {
+    /* load test data for tables: Book, Copy and Author*/
+    public static void loadDataBookAndAuthor(Connection conn) throws Exception{
+      String[] result;
       File file = new File("book.txt");
       Scanner scan = new Scanner(file);
+      PreparedStatement ps_book = conn.prepareStatement("INSERT INTO book (call_number, title, publish_date) VALUES (?, ?, ?)");
+      PreparedStatement ps_copy = conn.prepareStatement("INSERT INTO copy (call_number, copy_number) VALUES (?,?)");
+      PreparedStatement ps_author = conn.prepareStatement("INSERT INTO author (name, call_number) VALUES (?,?)");
 
-      PreparedStatement ps_book = conn.prepareStatement("INSERT INTO category (call_number, title, publish_date) VALUES(?, ?, ?);");
-      PreparedStatement ps_copy = conn.prepareStatement("INSERT INTO copy (call_number, copy_number) VALUES(?,?);");
-      PreparedStatement ps_author = conn.prepareStatement("INSERT INTO author(name, call_number) VALUES(?,?);");
-      
+      while (scan.hasNextLine()){
+        String data = scan.nextLine();
+        result = data.split("\t");
+        String author = result[3];
+        String[] nameList = author.split(",");
+        try{
+          for(int i=0; i<nameList.length; i++){
+            ps_author.setString(1, nameList[0]);
+            ps_author.setString(2, result[0]);
+            ps_author.execute();
+          }
+        }
+        catch (Exception ex){
 
+        }
+        // book.txt: {call_number, copy_number, title, arthur_name, publish_date}
+        ps_copy.setString(1, result[0]);
+        ps_book.setString(1, result[0]);
+        ps_copy.setString(2, result[1]);
+        ps_book.setString(2, result[2]);
+        ps_book.setString(3, result[4]);
+
+        ps_copy.execute();
+        ps_book.execute();
       }
+      System.out.println("Data of Book and Author have been loaded successfully!\n");
+    }
 
     /* load test data for table: Checkout_record */
-    public static void loadDataCheckoutRecord(Connection conn) throws Exception {
+    public static void loadDataCheckoutRecord(Connection conn) throws Exception{
       File file = new File("checkout.txt");
       Scanner scan = new Scanner(file);
       while (scan.hasNextLine())
