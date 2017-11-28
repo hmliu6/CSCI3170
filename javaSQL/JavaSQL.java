@@ -18,6 +18,8 @@ public class JavaSQL {
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery("use project");
             main_menu(conn);
             conn.close();
         }
@@ -46,7 +48,6 @@ public class JavaSQL {
         System.out.print("Enter Your Choice: ");
         input = scan.nextInt();
       } while(input < 1 || input > 4);
-      scan.close();
       if(input == 1)
         admin_operation(conn);
       else if(input == 2)
@@ -67,11 +68,10 @@ public class JavaSQL {
       System.out.println("3. Load Data");
       System.out.println("4. Show number of records in each table");
       System.out.println("5. Return to the main menu");
+      Scanner scan = new Scanner(System.in);
       do{
         System.out.print("Enter Your Choice: ");
-        Scanner scan = new Scanner(System.in);
         input = scan.nextInt();
-        scan.close();
       } while(input < 1 || input > 5);
       if(input == 1)
         System.exit(1);
@@ -97,7 +97,6 @@ public class JavaSQL {
         System.out.print("Enter Your Choice: ");
         input = scan.nextInt();
       } while(input < 1 || input > 3);
-      scan.close();
       if(input == 1)
         bookSearch(conn);
       else if(input == 2)
@@ -121,7 +120,6 @@ public class JavaSQL {
         System.out.print("Enter Your Choice: ");
         input = scan.nextInt();
       } while(input < 1 || input > 4);
-      scan.close();
       if(input == 1)
         System.exit(1);
       else if(input == 2)
@@ -146,16 +144,43 @@ public class JavaSQL {
         System.out.print("Choose the search criteria: ");
         input = scan.nextInt();
       } while(input < 1 || input > 3);
-      scan.close();
       try{
         System.out.print("Type in the search keyword: ");
         Scanner keyword = new Scanner(System.in);
-        if(input == 1)
+        if(input == 1){
           callNumber = keyword.nextInt();
+          String sqlStatement = "SELECT * FROM " + 
+                                "book, copy, author WHERE " + 
+                                "book.call_number = copy.call_number AND " + 
+                                "book.call_number = author.call_number AND " + 
+                                "author.call_number = copy.call_number AND " +
+                                "book.call_number = ?";
+          PreparedStatement pstmt = conn.prepareStatement(sqlStatement);
+          pstmt.setInt(1, callNumber);
+          ResultSet rs = pstmt.executeQuery();
+          System.out.println("| Call Number | Title | Author |  Available Copies |");
+          int callResult = 0, copyResult = 0;
+          String titleResult = "", authorResult = "";
+          while( rs.next() ){
+            int callTemp = rs.getInt("call_number");
+            if(callTemp == callResult){
+              authorResult = authorResult + ", " + rs.getString("name");
+            }
+            else{
+              if(callResult != 0)
+                System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
+              callResult = callTemp;
+              titleResult = rs.getString("title");
+              authorResult = rs.getString("name");
+              copyResult = rs.getInt("copy_number");
+            }
+          }
+          System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
+        }
+          
         else
           searchKey = keyword.nextLine();
-        PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM user U1, book B1, bookCopy C1, author A1 WHERE B1.call_nubmer = C1.call_number AND B1.call_number = A1.call_number");
-        pstmt.close();
+        
       }
       catch (Exception exp){
         System.out.println("Exception: " + exp.getMessage());
