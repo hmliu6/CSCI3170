@@ -68,7 +68,7 @@ CREATE TABLE `checkout_record` (
   `call_number` text NOT NULL,
   `copy_number` int(10) UNSIGNED NOT NULL,
   `checkout_date` date NOT NULL,
-  `return_date` date NOT NULL
+  `return_date` date NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
