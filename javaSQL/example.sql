@@ -37,7 +37,7 @@ CREATE TABLE checkout_record(
     call_number integer not null,
     copy_number integer not null,
     checkout_date varchar(10) not null,
-    return_date varchar(10) not null,
+    return_date varchar(10),
     PRIMARY KEY(user_id, call_number, copy_number, checkout_date),
     FOREIGN KEY(user_id) REFERENCES user(user_id),
     FOREIGN KEY(call_number, copy_number) REFERENCES copy(call_number, copy_number));

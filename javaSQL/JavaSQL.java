@@ -133,13 +133,14 @@ public class JavaSQL {
     }
 
     public static void bookSearch(Connection conn){
-      int input, callNumber;
-      String searchKey;
+      int input;
+      String searchKey, callNumber;
       System.out.println("Choose the search criteria:");
       System.out.println("1. Call Number");
       System.out.println("2. Title");
       System.out.println("3. Author");
       Scanner scan = new Scanner(System.in);
+      // Get searching criteria
       do{
         System.out.print("Choose the search criteria: ");
         input = scan.nextInt();
@@ -149,8 +150,9 @@ public class JavaSQL {
         Scanner keyword = new Scanner(System.in);
         String sqlStatement;
         PreparedStatement pstmt;
+        // Build SQL statement
         if(input == 1){
-          callNumber = keyword.nextInt();
+          callNumber = keyword.nextLine();
           sqlStatement = "SELECT * FROM " + 
                          "book, copy, author WHERE " + 
                          "book.call_number = copy.call_number AND " + 
@@ -158,7 +160,7 @@ public class JavaSQL {
                          "author.call_number = copy.call_number AND " +
                          "book.call_number = ?";
           pstmt = conn.prepareStatement(sqlStatement);
-          pstmt.setInt(1, callNumber);
+          pstmt.setString(1, callNumber);
         }
         else if(input == 2){
           searchKey = keyword.nextLine();
@@ -184,17 +186,18 @@ public class JavaSQL {
           searchKey = "%" + searchKey + "%";
           pstmt.setString(1, searchKey);
         }
+        // Parse Output
         ResultSet rs = pstmt.executeQuery();
         System.out.println("| Call Number | Title | Author |  Available Copies |");
-        int callResult = 0, copyResult = 0;
-        String titleResult = "", authorResult = "";
+        int copyResult = 0;
+        String titleResult = "", authorResult = "", callResult = "";
         while( rs.next() ){
-          int callTemp = rs.getInt("call_number");
-          if(callTemp == callResult){
+          String callTemp = rs.getString("call_number");
+          if(callTemp.equals(callResult)){
             authorResult = authorResult + ", " + rs.getString("name");
           }
           else{
-            if(callResult != 0)
+            if(!callResult.equals(""))
               System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
             callResult = callTemp;
             titleResult = rs.getString("title");
@@ -205,14 +208,56 @@ public class JavaSQL {
         System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
       }
       catch (Exception exp){
-        System.out.println("Exception: " + exp.getMessage());
+        System.out.println("[Error]: An matching search record is not found. The input does not exist in database.");
       }
     }
 
     public static void showUserRecord(Connection conn){
-      System.out.print("Enter the User ID: ");
-      Scanner scan = new Scanner(System.in);
-      String input = scan.nextLine();
-      scan.close();
+      String userID;
+      try{
+        System.out.print("Enter the User ID: ");
+        Scanner scan = new Scanner(System.in);
+        String sqlStatement;
+        PreparedStatement pstmt;
+        // Build SQL statement
+        userID = scan.nextLine();
+        sqlStatement = "SELECT * FROM " + 
+                       "book, copy, author, checkout_record WHERE " + 
+                       "book.call_number = copy.call_number AND " + 
+                       "book.call_number = author.call_number AND " + 
+                       "author.call_number = copy.call_number AND " +
+                       "checkout_record.call_number = book.call_number AND " + 
+                       "checkout_record.user_id = ?";
+        System.out.println(sqlStatement);
+        pstmt = conn.prepareStatement(sqlStatement);
+        pstmt.setString(1, userID);
+
+        // Parse Output
+        ResultSet rs = pstmt.executeQuery();
+        System.out.println("| Call Number | Copy Number | Title | Author | Check-out | Returned? |");
+        int copyResult = 0;
+        String titleResult = "", authorResult = "", callResult = "", checkoutResult = "";
+        while( rs.next() ){
+          String callTemp = rs.getString("call_number");
+          if(callTemp.equals(callResult)){
+            authorResult = authorResult + ", " + rs.getString("name");
+          }
+          else{
+            if(!callResult.equals(""))
+              System.out.println("| " + callResult + " | " + copyResult + " | " + titleResult + " | " + authorResult + " | " + checkoutResult + "  |");
+            callResult = callTemp;
+            copyResult = rs.getInt("copy_number");
+            titleResult = rs.getString("title");
+            authorResult = rs.getString("name");
+            checkoutResult = rs.getString("checkout_date");
+            // Missing Returned?
+          }
+        }
+      System.out.println("| " + callResult + " | " + copyResult + " | " + titleResult + " | " + authorResult + " | " + checkoutResult + "  |");
+    }
+    catch (Exception exp){
+      System.out.println("[Error]: An matching search record is not found. The input does not exist in database.");
+    }
+
     }
 }
