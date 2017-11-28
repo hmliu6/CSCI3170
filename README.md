@@ -37,14 +37,17 @@ docker pull centurylink/mysql
 3. Run Docker and create container
 
 ```bash
-docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=test centurylink/mysql
+docker run -d -v {LOCAL DIR}:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=test centurylink/mysql
 # Port number = 3306
 # username = root, password = test
+# {LOCAL DIR}: To store mysql database permanent
+# By mounting local directory to docker volume
 ```
 OR
 ```bash
 bash javaSQL/hostMySQL.sh
 # By default, localhost:3306 , username = root , password = test
+# Need to create mysql/ in Desktop
 ```
 
 To kill container after testing, check container ID by `docker container ls`
