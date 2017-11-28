@@ -147,40 +147,62 @@ public class JavaSQL {
       try{
         System.out.print("Type in the search keyword: ");
         Scanner keyword = new Scanner(System.in);
+        String sqlStatement;
+        PreparedStatement pstmt;
         if(input == 1){
           callNumber = keyword.nextInt();
-          String sqlStatement = "SELECT * FROM " + 
-                                "book, copy, author WHERE " + 
-                                "book.call_number = copy.call_number AND " + 
-                                "book.call_number = author.call_number AND " + 
-                                "author.call_number = copy.call_number AND " +
-                                "book.call_number = ?";
-          PreparedStatement pstmt = conn.prepareStatement(sqlStatement);
+          sqlStatement = "SELECT * FROM " + 
+                         "book, copy, author WHERE " + 
+                         "book.call_number = copy.call_number AND " + 
+                         "book.call_number = author.call_number AND " + 
+                         "author.call_number = copy.call_number AND " +
+                         "book.call_number = ?";
+          pstmt = conn.prepareStatement(sqlStatement);
           pstmt.setInt(1, callNumber);
-          ResultSet rs = pstmt.executeQuery();
-          System.out.println("| Call Number | Title | Author |  Available Copies |");
-          int callResult = 0, copyResult = 0;
-          String titleResult = "", authorResult = "";
-          while( rs.next() ){
-            int callTemp = rs.getInt("call_number");
-            if(callTemp == callResult){
-              authorResult = authorResult + ", " + rs.getString("name");
-            }
-            else{
-              if(callResult != 0)
-                System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
-              callResult = callTemp;
-              titleResult = rs.getString("title");
-              authorResult = rs.getString("name");
-              copyResult = rs.getInt("copy_number");
-            }
-          }
-          System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
         }
-          
-        else
+        else if(input == 2){
           searchKey = keyword.nextLine();
-        
+          sqlStatement = "SELECT * FROM " + 
+                         "book, copy, author WHERE " + 
+                         "book.call_number = copy.call_number AND " + 
+                         "book.call_number = author.call_number AND " + 
+                         "author.call_number = copy.call_number AND " +
+                         "book.title LIKE ?";
+          pstmt = conn.prepareStatement(sqlStatement);
+          searchKey = "%" + searchKey + "%";
+          pstmt.setString(1, searchKey);
+        }
+        else{
+          searchKey = keyword.nextLine();
+          sqlStatement = "SELECT * FROM " + 
+                         "book, copy, author WHERE " + 
+                         "book.call_number = copy.call_number AND " + 
+                         "book.call_number = author.call_number AND " + 
+                         "author.call_number = copy.call_number AND " +
+                         "author.name LIKE ?";
+          pstmt = conn.prepareStatement(sqlStatement);
+          searchKey = "%" + searchKey + "%";
+          pstmt.setString(1, searchKey);
+        }
+        ResultSet rs = pstmt.executeQuery();
+        System.out.println("| Call Number | Title | Author |  Available Copies |");
+        int callResult = 0, copyResult = 0;
+        String titleResult = "", authorResult = "";
+        while( rs.next() ){
+          int callTemp = rs.getInt("call_number");
+          if(callTemp == callResult){
+            authorResult = authorResult + ", " + rs.getString("name");
+          }
+          else{
+            if(callResult != 0)
+              System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
+            callResult = callTemp;
+            titleResult = rs.getString("title");
+            authorResult = rs.getString("name");
+            copyResult = rs.getInt("copy_number");
+          }
+        }
+        System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
       }
       catch (Exception exp){
         System.out.println("Exception: " + exp.getMessage());
