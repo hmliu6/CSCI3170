@@ -80,9 +80,29 @@ public class JavaSQL {
       else if(input == 3)
         System.exit(1);
       else if(input == 4)
-        System.exit(1);
+        showAllTable(conn);
       else if(input == 5)
         main_menu(conn);
+    }
+
+    public static void showAllTable(Connection conn){
+      System.out.println("\nNumber of records in each table: ");
+      String[] tables = {"category", "user", "book", "copy", "checkout_record", "author"};
+      String sqlStatement = "SELECT COUNT(*) FROM ";
+      try{
+        for(int i=0; i<tables.length; i++){
+          String temp = sqlStatement + tables[i];
+          PreparedStatement pstmt = conn.prepareStatement(temp);
+          ResultSet rs = pstmt.executeQuery();
+          // Move cursor to data
+          rs.next();
+          int count = rs.getInt("count(*)");
+          System.out.println("\033[3m" + tables[i] + "\033[0m" + ": " + count);
+        }
+      }
+      catch (Exception ex){
+        System.out.println("Error: " + ex);
+      }
     }
 
     public static void user_operation(Connection conn){
