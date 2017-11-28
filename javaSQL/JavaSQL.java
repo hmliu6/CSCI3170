@@ -107,31 +107,6 @@ public class JavaSQL {
         user_operation(conn);
     }
 
-    public static void librarian_operation(Connection conn){
-      int input;
-      System.out.println("\n-----Operations for librarian menu-----");
-      System.out.println("What kinds of operations would you like to perform?");
-      System.out.println("1. Book Borrowing");
-      System.out.println("2. Book Returning");
-      System.out.println("3. List all un-returned book copies which are checked out within a period");
-      System.out.println("4. Return to the main menu");
-      Scanner scan = new Scanner(System.in);
-      do{
-        System.out.print("Enter Your Choice: ");
-        input = scan.nextInt();
-      } while(input < 1 || input > 4);
-      if(input == 1)
-        System.exit(1);
-      else if(input == 2)
-        System.exit(1);
-      else if(input == 3)
-        System.exit(1);
-      else if(input == 4)
-        main_menu(conn);
-      else
-        librarian_operation(conn);
-    }
-
     public static void bookSearch(Connection conn){
       int input;
       String searchKey, callNumber;
@@ -268,11 +243,34 @@ public class JavaSQL {
         throw new Exception("no output");
       else
         System.out.println("| " + callResult + " | " + copyResult + " | " + titleResult + " | " + authorResult + " | " + checkoutResult + " | " + returnResult + "  |");
-      
-    }
-    catch (Exception exp){
-      System.out.println("[Error]: An matching search record is not found. The input does not exist in database.");
+      }
+      catch (Exception exp){
+        System.out.println("[Error]: An matching search record is not found. The input does not exist in database.");
+      }
     }
 
+    public static void librarian_operation(Connection conn){
+      int input;
+      System.out.println("\n-----Operations for librarian menu-----");
+      System.out.println("What kinds of operations would you like to perform?");
+      System.out.println("1. Book Borrowing");
+      System.out.println("2. Book Returning");
+      System.out.println("3. List all un-returned book copies which are checked out within a period");
+      System.out.println("4. Return to the main menu");
+      Scanner scan = new Scanner(System.in);
+      do{
+        System.out.print("Enter Your Choice: ");
+        input = scan.nextInt();
+      } while(input < 1 || input > 4);
+      if(input == 1)
+        System.exit(1);
+      else if(input == 2)
+        System.exit(1);
+      else if(input == 3)
+        System.exit(1);
+      else if(input == 4)
+        main_menu(conn);
+      else
+        librarian_operation(conn);
     }
 }
