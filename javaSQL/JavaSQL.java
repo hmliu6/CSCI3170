@@ -9,6 +9,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import java.util.Scanner;
+import java.util.Date;
+
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+
 
 public class JavaSQL {
     public static void main(String[] args) {
@@ -411,16 +416,188 @@ public class JavaSQL {
         input = scan.nextInt();
       } while(input < 1 || input > 4);
       if(input == 1)
-        System.exit(1);
+        bookBorrowing(conn);
       else if(input == 2)
-        System.exit(1);
+        bookReturning(conn);
       else if(input == 3)
-        System.exit(1);
+        listUnreturnedBooks(conn);
       else if(input == 4)
         main_menu(conn);
       else
         librarian_operation(conn);
     }
 
+    /* librarian function 1 : book borrowing */
+    public static void bookBorrowing(Connection conn){
+      /* Input user info: user id, book info: call number and copy nubmer*/
+      String userID;
+      String call_number;
+      int copy_number;
+      Scanner scan = new Scanner(System.in);
+      System.out.print("Enter The User ID: ");
+      userID = scan.nextLine();
+      System.out.print("Enter The Call Number: ");
+      call_number = scan.nextLine();
+      System.out.print("Enter The Copy Number: ");
+      copy_number = scan.nextInt();
 
+      /* Check the availablity of the book with callNumber and copyNumber */
+      String sqlStatement_check;
+      PreparedStatement pstmt_check;
+      try{
+        sqlStatement_check = "SELECT * FROM " + 
+                           "checkout_record WHERE " +
+                           "call_number = ? AND " +
+                           "copy_number = ? AND " +
+                           "return_date <> NULL;";
+        pstmt_check = conn.prepareStatement(sqlStatement_check);
+        pstmt_check.setString(1, call_number);
+        pstmt_check.setInt(2, copy_number);
+        ResultSet rs_check = pstmt_check.executeQuery();
+
+      /* If the result is empty, borrow the book, otherwise do nothing and show message */
+      if(!rs_check.next()){
+        /* Borrow the book */
+        String sqlStatement_borrow;
+        PreparedStatement pstmt_borrow;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+        /* Insert record */
+        sqlStatement_borrow = "INSERT INTO checkout_record (call_number, copy_number, user_id, checkout_date, return_date) VALUES (?, ?, ?, ?, NULL)";
+        pstmt_borrow = conn.prepareStatement(sqlStatement_borrow);
+        pstmt_borrow.setString(1, call_number);
+        pstmt_borrow.setInt(2, copy_number);
+        pstmt_borrow.setString(3, userID);
+        pstmt_borrow.setString(4, dateFormat.format(date));
+
+        /* execute SQL */
+        if(pstmt_borrow.execute()){
+          /* Informative message of successfully checkout */
+          System.out.println("Book checkout performed successfully!!" );
+        }else{
+          System.out.println("Book checkout failed to perform!!" );
+        }
+      }else{
+        /* The book has been borrowed! */
+        System.out.println("[Error]: The Book (Call Number: "+ call_number+" , Copy Number: "+copy_number+") has been borrowed!" );
+      }
+    }catch (Exception exp){
+      System.out.println("Error: " + exp);
+    }
+
+    }
+
+    /* librarian function 2 : book returning */
+    public static void bookReturning(Connection conn){
+      /* Input user info: user id, book info: call number and copy nubmer*/
+      String userID;
+      String call_number;
+      int copy_number;
+      Scanner scan = new Scanner(System.in);
+      System.out.print("Enter The User ID: ");
+      userID = scan.nextLine();
+      System.out.print("Enter The Call Number: ");
+      call_number = scan.nextLine();
+      System.out.print("Enter The Copy Number: ");
+      copy_number = scan.nextInt();
+
+      /* Check the existence of the checkout record with the user info and book info */
+      String sqlStatement_check;
+      PreparedStatement pstmt_check;
+      try{
+      sqlStatement_check = "SELECT * FROM " + 
+                         "checkout_record WHERE " +
+                         "user_id = ? AND "+
+                         "call_number = ? AND " +
+                         "copy_number = ? AND " +
+                         "return_date == NULL;";
+      pstmt_check = conn.prepareStatement(sqlStatement_check);
+      pstmt_check.setString(1, userID);
+      pstmt_check.setString(2, call_number);
+      pstmt_check.setInt(3, copy_number);
+      
+      ResultSet rs_check = pstmt_check.executeQuery();
+      /* If the result is NOT empty, return the book, otherwise do nothing and show message */
+      if(rs_check.next()){
+        /* return the book */
+        String sqlStatement_return;
+        PreparedStatement pstmt_return;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+        /* Update table */
+        sqlStatement_return = "UPDATE checkout_record "+
+                            "SET return_date = ? "+
+                            "WHERE user_id = ? AND "+
+                            "call_number = ? AND "+
+                            "copy_number = ?;";
+        pstmt_return = conn.prepareStatement(sqlStatement_return);
+        pstmt_return.setString(1, dateFormat.format(date));
+        pstmt_return.setString(2, userID);
+        pstmt_return.setString(3, call_number);
+        pstmt_return.setInt(4, copy_number);
+
+        /* execute SQL */
+        if(pstmt_return.execute()){
+          /* Informative message of successfully checkout */
+          System.out.println("Book returning performed successfull!!!" );
+        }else{
+          System.out.println("Book returning failed to perform!!" );
+        }
+      }else{
+        /* The book has been return or some reason we cannot find the record! */
+        System.out.println("[Error]: Cannot found such record!" );
+      }
+    }catch (Exception exp){
+      System.out.println("Error: " + exp);
+    }}
+
+    /* librarian function 3 : list all un-returned book copies */
+    public static void listUnreturnedBooks(Connection conn){
+      /* Input the start date and end date for */
+      String startDate;
+      String endDate;
+      Scanner scan = new Scanner(System.in);
+      System.out.print("Type in the starting date [dd/mm/YYYY]: ");
+      startDate = scan.nextLine();
+      System.out.print("Type in the ending date [dd/mm/YYYY]: ");
+      endDate = scan.nextLine();
+
+      /* Get unreturn data 
+      checkout_record (user_id,   call_number,   copy_number,    checkout_date,  return_date) */
+      String sqlStatement_unreturn;
+      PreparedStatement pstmt_unreturn;
+      try{
+      sqlStatement_unreturn = "SELECT user_id, call_number, copy_number, checkout_date FROM " + 
+                           "checkout_record WHERE " +
+                           "checkout_date BETWEEN ? AND ?)"+
+                           "AND return_date == NULL "+
+                           "ORDER BY checkout_date DESC;";
+      pstmt_unreturn = conn.prepareStatement(sqlStatement_unreturn);
+      pstmt_unreturn.setString(1, startDate);
+      pstmt_unreturn.setString(2, endDate);
+
+      /* Printing the result to console */
+      ResultSet rs_unreturn = pstmt_unreturn.executeQuery();
+      
+
+      System.out.println("| User ID | Call Number | Copy Number | Checkout Date |");
+      Boolean hasResult = false;
+      String result_userID = "", result_callNubmer = "", result_checkoutDate = "";
+      int result_copyNumber;
+      while( rs_unreturn.next() ){
+        hasResult = true;
+        result_userID = rs_unreturn.getString("user_id");
+        result_callNubmer = rs_unreturn.getString("call_number");
+        result_copyNumber = rs_unreturn.getInt("copy_number");
+        result_checkoutDate = rs_unreturn.getString("checkout_date");
+        System.out.println("| " + result_userID + " | " + result_callNubmer + " | " + result_copyNumber + " | " + result_checkoutDate + " | ");
+      if(!hasResult)
+        throw new Exception("no output");
+      else
+        System.out.println("| " + result_userID + " | " + result_callNubmer + " | " + result_copyNumber + " | " + result_checkoutDate + " | ");
+      }
+      }catch (Exception exp){
+        System.out.println("Error: " + exp);
+        }
+    }
 }
