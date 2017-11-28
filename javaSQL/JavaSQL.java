@@ -145,6 +145,7 @@ public class JavaSQL {
         System.out.print("Choose the search criteria: ");
         input = scan.nextInt();
       } while(input < 1 || input > 3);
+      Boolean hasResult = false;
       try{
         System.out.print("Type in the search keyword: ");
         Scanner keyword = new Scanner(System.in);
@@ -192,6 +193,7 @@ public class JavaSQL {
         int copyResult = 0;
         String titleResult = "", authorResult = "", callResult = "";
         while( rs.next() ){
+          hasResult = true;
           String callTemp = rs.getString("call_number");
           if(callTemp.equals(callResult)){
             authorResult = authorResult + ", " + rs.getString("name");
@@ -205,7 +207,10 @@ public class JavaSQL {
             copyResult = rs.getInt("copy_number");
           }
         }
-        System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
+        if(!hasResult)
+          throw new Exception("no output");
+        else
+          System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
       }
       catch (Exception exp){
         System.out.println("[Error]: An matching search record is not found. The input does not exist in database.");
@@ -235,25 +240,35 @@ public class JavaSQL {
         // Parse Output
         ResultSet rs = pstmt.executeQuery();
         System.out.println("| Call Number | Copy Number | Title | Author | Check-out | Returned? |");
+        Boolean hasResult = false;
         int copyResult = 0;
-        String titleResult = "", authorResult = "", callResult = "", checkoutResult = "";
+        String titleResult = "", authorResult = "", callResult = "", checkoutResult = "", returnResult = "";
         while( rs.next() ){
+          hasResult = true;
           String callTemp = rs.getString("call_number");
           if(callTemp.equals(callResult)){
             authorResult = authorResult + ", " + rs.getString("name");
           }
           else{
             if(!callResult.equals(""))
-              System.out.println("| " + callResult + " | " + copyResult + " | " + titleResult + " | " + authorResult + " | " + checkoutResult + "  |");
+              System.out.println("| " + callResult + " | " + copyResult + " | " + titleResult + " | " + authorResult + " | " + checkoutResult + " | " + returnResult + "  |");
             callResult = callTemp;
             copyResult = rs.getInt("copy_number");
             titleResult = rs.getString("title");
             authorResult = rs.getString("name");
             checkoutResult = rs.getString("checkout_date");
-            // Missing Returned?
+            returnResult = rs.getString("return_date");
+            if(returnResult.equals(""))
+              returnResult = "No";
+            else
+              returnResult = "Yes";
           }
         }
-      System.out.println("| " + callResult + " | " + copyResult + " | " + titleResult + " | " + authorResult + " | " + checkoutResult + "  |");
+      if(!hasResult)
+        throw new Exception("no output");
+      else
+        System.out.println("| " + callResult + " | " + copyResult + " | " + titleResult + " | " + authorResult + " | " + checkoutResult + " | " + returnResult + "  |");
+      
     }
     catch (Exception exp){
       System.out.println("[Error]: An matching search record is not found. The input does not exist in database.");
