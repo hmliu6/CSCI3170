@@ -76,13 +76,30 @@ public class JavaSQL {
       if(input == 1)
         System.exit(1);
       else if(input == 2)
-        System.exit(1);
+        dropAllTable(conn);
       else if(input == 3)
         System.exit(1);
       else if(input == 4)
         showAllTable(conn);
       else if(input == 5)
         main_menu(conn);
+    }
+
+    public static void dropAllTable(Connection conn){
+      System.out.println("Processing...");
+      String[] tables = {"category", "user", "book", "copy", "checkout_record", "author"};
+      String sqlStatement = "DROP DATABASE IF EXISTS  ";
+      try{
+        for(int i=0; i<tables.length; i++){
+          String temp = sqlStatement + tables[i];
+          PreparedStatement pstmt = conn.prepareStatement(temp);
+          ResultSet rs = pstmt.executeQuery();
+        }
+        System.out.println("Done! Database is removed!");
+      }
+      catch (Exception ex){
+        System.out.println("Error: " + ex);
+      }
     }
 
     public static void showAllTable(Connection conn){
