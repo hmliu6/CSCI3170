@@ -25,10 +25,12 @@ public class JavaSQL {
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
+            Statement dropDatabase = conn.createStatement();
+            Statement createDatavase = conn.createStatement();
             Statement stmt = conn.createStatement();
-            stmt.executeQuery("DROP DATABASE IF EXISTS project");
-            stmt.executeQuery("CREATE DATABASE project");
-            stmt.executeQuery("use project");
+            dropDatabase.executeUpdate("DROP DATABASE IF EXISTS project;");
+            createDatavase.executeUpdate("CREATE DATABASE project;");
+            stmt.executeUpdate("use project;");
             main_menu(conn);
             conn.close();
         }
