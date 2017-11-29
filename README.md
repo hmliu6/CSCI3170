@@ -67,3 +67,27 @@ String password = "test";
 
 2. `make`
 3. `java -cp .:jdbc.jar JavaSQL`
+
+
+### Progress ###
+Testing
+
+1. Operations for administrator menu
+	- [ ] 1.1 Create all tables
+	- [ ] 1.2 Delete all tables
+	- [ ] 1.3 Load Data
+	- [ ] 1.4 Show number of records in each table
+	- [ ] 1.5 Return to the main menu
+
+2. Operations for library user menu
+	- [ ] 2.1 Search for books
+	- [ ] 2.2 Show checkout records of a user
+	- [ ] 2.3 Return to the main menu
+
+3. Operations for librarian menu
+	- [ ] 3.1 Book Borrowing
+	- [ ] 3.2 Book Returning
+	- [ ] 3.3 List all un-returned book copies which are checked out within a period
+	- [ ] 3.4 Return to the main menu
+
+
