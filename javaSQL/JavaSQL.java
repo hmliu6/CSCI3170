@@ -28,9 +28,9 @@ public class JavaSQL {
             Statement dropDatabase = conn.createStatement();
             Statement createDatavase = conn.createStatement();
             Statement stmt = conn.createStatement();
-            dropDatabase.executeUpdate("DROP DATABASE IF EXISTS project;");
-            createDatavase.executeUpdate("CREATE DATABASE project;");
-            stmt.executeUpdate("use project;");
+            // dropDatabase.executeUpdate("DROP DATABASE IF EXISTS project;");
+            // createDatavase.executeUpdate("CREATE DATABASE project;");
+            // stmt.executeUpdate("use project;");
             main_menu(conn);
             conn.close();
         }
