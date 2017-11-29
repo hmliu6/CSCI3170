@@ -66,4 +66,4 @@ String password = "test";
 ```
 
 2. `make`
-3. `java JavaSQL`
+3. `java -cp .:jdbc.jar JavaSQL`

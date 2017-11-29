@@ -26,6 +26,8 @@ public class JavaSQL {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
+            stmt.executeQuery("DROP DATABASE IF EXISTS project");
+            stmt.executeQuery("CREATE DATABASE project");
             stmt.executeQuery("use project");
             main_menu(conn);
             conn.close();
