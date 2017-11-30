@@ -408,12 +408,19 @@ public class JavaSQL {
           authorResult = authorResult + ", " + rs.getString("name");
         } else {
           if (!callResult.equals(""))
-            System.out
-                .println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
+            System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
           callResult = callTemp;
           titleResult = rs.getString("title");
           authorResult = rs.getString("name");
           copyResult = rs.getInt("copy_number");
+          
+          String sqlStatement_unreturn = "SELECT count(return_date) FROM checkout_record WHERE return_date = '' AND call_number = ? group by call_number";
+          PreparedStatement unreturnPstmt = conn.prepareStatement(sqlStatement_unreturn);
+          unreturnPstmt.setString(1, callResult);
+          ResultSet unreturnSet = unreturnPstmt.executeQuery();
+          unreturnSet.next();
+          int number = unreturnSet.getInt("count(return_date)");
+          copyResult -= number;
         }
       }
       if (!hasResult)
