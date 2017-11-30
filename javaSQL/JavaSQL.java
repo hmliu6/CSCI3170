@@ -406,7 +406,8 @@ public class JavaSQL {
         String callTemp = rs.getString("call_number");
         if (callTemp.equals(callResult)) {
           authorResult = authorResult + ", " + rs.getString("name");
-        } else {
+        }
+        else {
           if (!callResult.equals(""))
             System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
           callResult = callTemp;
