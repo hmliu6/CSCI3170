@@ -76,7 +76,7 @@ Testing
 	- [ ] 1.1 Create all tables
 	- [ ] 1.2 Delete all tables
 	- [ ] 1.3 Load Data
-	- [ ] 1.4 Show number of records in each table
+	- [x] 1.4 Show number of records in each table
 	- [ ] 1.5 Return to the main menu
 
 2. Operations for library user menu

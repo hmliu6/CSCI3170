@@ -30,7 +30,7 @@ public class JavaSQL {
             Statement stmt = conn.createStatement();
             // dropDatabase.executeUpdate("DROP DATABASE IF EXISTS project;");
             // createDatavase.executeUpdate("CREATE DATABASE project;");
-            // stmt.executeUpdate("use project;");
+            stmt.executeUpdate("use project;");
             main_menu(conn);
             conn.close();
         }
@@ -67,6 +67,7 @@ public class JavaSQL {
         librarian_operation(conn);
       else if(input == 4){
         System.out.println("GoodBye!!!");
+        System.exit(1);
       }
     }
 
@@ -85,7 +86,7 @@ public class JavaSQL {
         input = scan.nextInt();
       } while(input < 1 || input > 5);
       if(input == 1)
-        System.exit(1);
+        createAllTables(conn);
       else if(input == 2)
         dropAllTable(conn);
       else if(input == 3)
@@ -94,7 +95,140 @@ public class JavaSQL {
         showAllTable(conn);
       else if(input == 5)
         main_menu(conn);
+      admin_operation(conn);
     }
+
+    /* Create All tables */
+    public static void createAllTables(Connection conn){
+      System.out.println("Create ALl Table...\n");
+      System.out.println("Processing...\n");
+      try{
+      String sqlStatement_create_category;
+      PreparedStatement pstmt_create_category;
+
+      /* create table: category */
+      sqlStatement_create_category = "CREATE TABLE category("+
+      "id integer primary key,"+
+      "loan_period integer not null,"+
+      "max_books integer not null);";
+
+      pstmt_create_category = conn.prepareStatement(sqlStatement_create_category);
+      /* execute SQL */
+      if(pstmt_create_category.execute()){
+        /* Informative message of successfully creation */
+        System.out.println("Table: category created successfully!!!" );
+      }else{
+        System.out.println("Fail to create table: category" );
+      }
+
+      /* create table: user */
+      String sqlStatement_create_user;
+      PreparedStatement pstmt_create_user;
+
+      sqlStatement_create_user = "CREATE TABLE user("+
+      "user_id varchar(10) primary key,"+
+      "name varchar(25) not null,"+
+      "address varchar(100) not null,"+
+      "category_id integer not null,"+
+      "FOREIGN KEY(category_id) REFERENCES category(id));";
+
+      pstmt_create_user = conn.prepareStatement(sqlStatement_create_user);
+      /* execute SQL */
+      if(pstmt_create_user.execute()){
+        /* Informative message of successfully creation */
+        System.out.println("Table: user created successfully!!!" );
+      }else{
+        System.out.println("Fail to create table: user" );
+      }
+
+      /* create table: book */
+      String sqlStatement_create_book;
+      PreparedStatement pstmt_create_book;
+
+      sqlStatement_create_book = "CREATE TABLE book("+
+      "call_number varchar(8) primary key,"+
+      "title varchar(30) not null,"+
+      "publish_date varchar(10) not null);";
+
+      pstmt_create_book = conn.prepareStatement(sqlStatement_create_book);
+      /* execute SQL */
+      if(pstmt_create_book.execute()){
+        /* Informative message of successfully creation */
+        System.out.println("Table: book created successfully!!!" );
+      }else{
+        System.out.println("Fail to create table: book" );
+      }
+
+      /* create table: author */
+      String sqlStatement_create_author;
+      PreparedStatement pstmt_create_author;
+
+      sqlStatement_create_author = "CREATE TABLE author("+
+      "name varchar(25) not null,"+
+      "call_number varchar(8) not null,"+
+      "PRIMARY KEY(name, call_number),"+
+      "FOREIGN KEY(call_number) REFERENCES book(call_number));";
+
+      pstmt_create_author = conn.prepareStatement(sqlStatement_create_author);
+      /* execute SQL */
+      if(pstmt_create_author.execute()){
+        /* Informative message of successfully creation */
+        System.out.println("Table: author created successfully!!!" );
+      }else{
+        System.out.println("Fail to create table: author" );
+      }
+
+      /* create table: copy */
+      String sqlStatement_create_copy;
+      PreparedStatement pstmt_create_copy;
+
+      sqlStatement_create_copy = "CREATE TABLE book("+
+      "call_number varchar(8) primary key,"+
+      "title varchar(30) not null,"+
+      "publish_date varchar(10) not null);";
+
+      pstmt_create_copy = conn.prepareStatement(sqlStatement_create_copy);
+      /* execute SQL */
+      if(pstmt_create_copy.execute()){
+        /* Informative message of successfully creation */
+        System.out.println("Table: copy created successfully!!!" );
+      }else{
+        System.out.println("Fail to create table: copy" );
+      }
+
+      /* create table: checkout_record */
+      String sqlStatement_create_checkout_record;
+      PreparedStatement pstmt_create_checkout_record;
+
+      sqlStatement_create_checkout_record = "CREATE TABLE checkout_record("+
+      "user_id varchar(10) not null,"+
+      "call_number varchar(8) not null,"+
+      "copy_number integer not null,"+
+      "checkout_date varchar(10) not null,"+
+      "return_date varchar(10),"+
+      "PRIMARY KEY(user_id, call_number, copy_number, checkout_date),"+
+      "FOREIGN KEY(user_id) REFERENCES user(user_id),"+
+      "FOREIGN KEY(call_number, copy_number) REFERENCES copy(call_number, copy_number));";
+      
+      pstmt_create_checkout_record = conn.prepareStatement(sqlStatement_create_checkout_record);
+      /* execute SQL */
+      if(pstmt_create_checkout_record.execute()){
+        /* Informative message of successfully creation */
+        System.out.println("Table: checkout_record created successfully!!!" );
+      }else{
+        System.out.println("All Table created successfully!!!" );
+      }
+
+
+      
+      System.out.println("Fail to create table: checkout_record" );  
+
+      }
+      catch(Exception ex){
+        System.out.println("Error: " + ex);
+      }
+
+  }
 
     /* Load ALL test data for database */
     public static void LoadData(Connection conn){
@@ -260,8 +394,7 @@ public class JavaSQL {
         showUserRecord(conn);
       else if(input == 3)
         main_menu(conn);
-      else
-        user_operation(conn);
+      user_operation(conn);
     }
 
     public static void bookSearch(Connection conn){
@@ -427,8 +560,7 @@ public class JavaSQL {
         listUnreturnedBooks(conn);
       else if(input == 4)
         main_menu(conn);
-      else
-        librarian_operation(conn);
+      librarian_operation(conn);
     }
 
     /* librarian function 1 : book borrowing */
