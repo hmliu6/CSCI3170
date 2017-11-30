@@ -360,6 +360,18 @@ public class JavaSQL {
     System.out.println("2. Title");
     System.out.println("3. Author");
     Scanner scan = new Scanner(System.in);
+    int columns = 10000;
+    try{
+      String sqlStatement = "SELECT COUNT(*) FROM book";
+      PreparedStatement pstmt = conn.prepareStatement(sqlStatement);
+      ResultSet rs = pstmt.executeQuery();
+      // Move cursor to data
+      rs.next();
+      columns = rs.getInt("count(*)");
+    }
+    catch (Exception ex){
+
+    }
     // Get searching criteria
     do {
       System.out.print("Choose the search criteria: ");
@@ -401,33 +413,44 @@ public class JavaSQL {
       System.out.println("| Call Number | Title | Author |  Available Copies |");
       int copyResult = 0;
       String titleResult = "", authorResult = "", callResult = "";
+      String[][] resultSet = new String[columns][3];
+      int[] copyNumberSet = new int[columns];
+      int count = 0;
       while (rs.next()) {
         hasResult = true;
+        Boolean found = false;
         String callTemp = rs.getString("call_number");
-        if (callTemp.equals(callResult)) {
-          authorResult = authorResult + ", " + rs.getString("name");
+        for(int i=0; i<count; i++){
+          if(resultSet[i][0].equals(callTemp)){
+            found = true;
+            resultSet[i][2] = resultSet[i][2] + ", " + rs.getString("name");
+          }
         }
-        else {
-          if (!callResult.equals(""))
-            System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
-          callResult = callTemp;
-          titleResult = rs.getString("title");
-          authorResult = rs.getString("name");
-          copyResult = rs.getInt("copy_number");
-          
-          String sqlStatement_unreturn = "SELECT count(return_date) FROM checkout_record WHERE return_date = '' AND call_number = ? group by call_number";
-          PreparedStatement unreturnPstmt = conn.prepareStatement(sqlStatement_unreturn);
-          unreturnPstmt.setString(1, callResult);
-          ResultSet unreturnSet = unreturnPstmt.executeQuery();
-          unreturnSet.next();
+        if(found)
+          continue;
+
+        resultSet[count][0] = callTemp;
+        resultSet[count][1] = rs.getString("title");
+        resultSet[count][2] = rs.getString("name");
+        copyNumberSet[count] = rs.getInt("copy_number");
+        
+        count += 1;
+
+        String sqlStatement_unreturn = "SELECT count(return_date) FROM checkout_record WHERE return_date = '' AND call_number = ? group by call_number";
+        PreparedStatement unreturnPstmt = conn.prepareStatement(sqlStatement_unreturn);
+        unreturnPstmt.setString(1, callResult);
+        ResultSet unreturnSet = unreturnPstmt.executeQuery();
+        if(unreturnSet.next()){
           int number = unreturnSet.getInt("count(return_date)");
-          copyResult -= number;
+          copyNumberSet[count] -= number;
         }
       }
       if (!hasResult)
         throw new Exception("no output");
-      else
-        System.out.println("| " + callResult + " | " + titleResult + " | " + authorResult + " | " + copyResult + "  |");
+      else{
+        for(int i=0; i<count; i++)
+          System.out.println("| " + resultSet[i][0] + " | " + resultSet[i][1] + " | " + resultSet[i][2] + " | " + copyNumberSet[i] + "  |");
+      }
     } catch (Exception exp) {
       System.out.println("[Error]: An matching search record is not found. The input does not exist in database.");
     }
