@@ -158,7 +158,7 @@ public class JavaSQL {
         PreparedStatement pstmt_create_copy;
 
         sqlStatement_create_copy = "CREATE TABLE copy("+
-        "call_number integer not null,"+
+        "call_number varchar(8) not null,"+
         "copy_number integer not null,"+
         "PRIMARY KEY(call_number, copy_number),"+
         "FOREIGN KEY(call_number) REFERENCES book(call_number));";
@@ -226,8 +226,8 @@ public class JavaSQL {
         String[] result = data.split("\t");
         for(int i=0; i<result.length; i++)
           pstmt.setString(i+1, result[i]);
+        pstmt.execute();
       }
-      pstmt.execute();
       System.out.println("Data of Category have been loaded successfully!\n");
       return;
     }
@@ -237,14 +237,14 @@ public class JavaSQL {
       File file = new File(path + "/" + "user.txt");
       Scanner scan = new Scanner(file);
 
-      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO user (id, name, address, category_id) VALUES (?, ?, ?, ?)");
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO user (user_id, name, address, category_id) VALUES (?, ?, ?, ?)");
       while (scan.hasNextLine()){
         String data = scan.nextLine();
         String[] result = data.split("\t");
         for(int i=0; i<result.length; i++)
           pstmt.setString(i+1, result[i]);
+          pstmt.execute();
       }
-      pstmt.execute();
       System.out.println("Data of User have been loaded successfully!\n");
       return;
     }
@@ -271,12 +271,12 @@ public class JavaSQL {
           }
         }
         catch (Exception ex){
-
         }
+
         // book.txt: {call_number, copy_number, title, arthur_name, publish_date}
         ps_copy.setString(1, result[0]);
-        ps_book.setString(1, result[0]);
         ps_copy.setString(2, result[1]);
+        ps_book.setString(1, result[0]);
         ps_book.setString(2, result[2]);
         ps_book.setString(3, result[4]);
 
@@ -290,7 +290,7 @@ public class JavaSQL {
     public static void loadDataCheckoutRecord(Connection conn, String path) throws Exception{
       File file = new File(path + "/" + "checkout.txt");
       Scanner scan = new Scanner(file);
-      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO checkout_record (id, call_number, copy_number, checkout_date, return_date) VALUES (?, ?, ?, ?, ?)");
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO checkout_record (user_id, call_number, copy_number, checkout_date, return_date) VALUES (?, ?, ?, ?, ?)");
       while (scan.hasNextLine()){
         // checkout.txt: {call_number, copy_number, user_id ,checkout_date, return_date}
         String data = scan.nextLine();
