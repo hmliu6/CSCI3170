@@ -1,43 +1,27 @@
--- phpMyAdmin SQL Dump
--- version 4.7.0
--- https://www.phpmyadmin.net/
---
--- Host: localhost
--- Generation Time: Nov 27, 2017 at 02:36 PM
--- Server version: 10.1.24-MariaDB
--- PHP Version: 7.1.6
+
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `CSCI3260_gp8`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `author`
---
+DROP TABLE `author`;
+DROP TABLE `book`;
+DROP TABLE `user`;
+DROP TABLE `category`;
+DROP TABLE `checkout_record`;
+DROP TABLE `copy`;
 
 CREATE TABLE `author` (
   `name` text NOT NULL,
   `call_number` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
+ALTER TABLE `author`
+ADD PRIMARY KEY (name(100), call_number(100)),
+ADD FOREIGN KEY (call_number) REFERENCES book(call_number(100));
 
---
--- Table structure for table `book`
---
+
 
 CREATE TABLE `book` (
   `call_number` text NOT NULL,
@@ -45,11 +29,10 @@ CREATE TABLE `book` (
   `publish_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
+ALTER TABLE `book`
+ADD PRIMARY KEY (call_number(100));
 
---
--- Table structure for table `category`
---
+
 
 CREATE TABLE `category` (
   `id` int(11) UNSIGNED NOT NULL,
@@ -57,36 +40,37 @@ CREATE TABLE `category` (
   `max_books` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
+ALTER TABLE `category`
+  ADD PRIMARY KEY (`id`);
 
---
--- Table structure for table `checkout_record`
---
+
 
 CREATE TABLE `checkout_record` (
-  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_id` text NOT NULL,
   `call_number` text NOT NULL,
-  `copy_number` int(10) UNSIGNED NOT NULL,
+  `copy_number` int(11) UNSIGNED NOT NULL,
   `checkout_date` date NOT NULL,
-  `return_date` date NOT NULL
+  `return_date` date NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
+ALTER TABLE `checkout_record`
+  ADD PRIMARY KEY (`user_id`(100),`call_number`(100),`copy_number`,`checkout_date`),
+  ADD FOREIGN KEY (user_id(100)) REFERENCES user(id),
+  ADD FOREIGN KEY (call_number(100)) REFERENCES book(call_number),
+  ADD FOREIGN KEY (call_number(100), copy_number) REFERENCES book(call_number, copy_number);
 
---
--- Table structure for table `copy`
---
+
 
 CREATE TABLE `copy` (
   `call_number` text NOT NULL,
   `copy_number` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `user`
---
+ALTER TABLE `copy`
+  ADD PRIMARY KEY (call_number(100),copy_number),
+  ADD FOREIGN KEY (call_number(100)) REFERENCES book(call_number);
+
 
 CREATE TABLE `user` (
   `id` text NOT NULL,
@@ -95,53 +79,7 @@ CREATE TABLE `user` (
   `category_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Indexes for dumped tables
---
 
---
--- Indexes for table `author`
---
-ALTER TABLE `author`
-  ADD PRIMARY KEY (`name`(100),`call_number`(100)),
-  ADD KEY `call_number` (`call_number`(100));
-
---
--- Indexes for table `book`
---
-ALTER TABLE `book`
-  ADD PRIMARY KEY (`call_number`(100));
-
---
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `checkout_record`
---
-ALTER TABLE `checkout_record`
-  ADD PRIMARY KEY (`user_id`,`call_number`(100),`copy_number`,`checkout_date`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `call_number` (`call_number`(100)),
-  ADD KEY `copy_number` (`copy_number`);
-
---
--- Indexes for table `copy`
---
-ALTER TABLE `copy`
-  ADD PRIMARY KEY (`call_number`(100),`copy_number`),
-  ADD KEY `call_number` (`call_number`(100));
-
---
--- Indexes for table `user`
---
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`(100)),
-  ADD KEY `category_id` (`category_id`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+  ADD FOREIGN KEY (category_id) REFERENCES category(id);
