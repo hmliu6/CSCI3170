@@ -618,6 +618,19 @@ public class JavaSQL {
     /* Input the start date and end date for */
     String startDate;
     String endDate;
+    int columns = 10000;
+    try{
+      String sqlStatement = "SELECT COUNT(*) FROM checkout_record";
+      PreparedStatement pstmt = conn.prepareStatement(sqlStatement);
+      ResultSet rs = pstmt.executeQuery();
+      // Move cursor to data
+      rs.next();
+      columns = rs.getInt("count(*)");
+    }
+    catch (Exception ex){
+
+    }
+    String[][] resultsInRange = new String[columns][4];
     Scanner scan = new Scanner(System.in);
     System.out.print("Type in the starting date [DD/MM/YYYY]: ");
     startDate = scan.nextLine();
@@ -628,6 +641,7 @@ public class JavaSQL {
     checkout_record (user_id,   call_number,   copy_number,    checkout_date,  return_date) */
     String sqlStatement_unreturn;
     PreparedStatement pstmt_unreturn;
+    int returnCount = 0;
     try {
       sqlStatement_unreturn = "SELECT user_id, call_number, copy_number, checkout_date FROM " + "checkout_record WHERE "
           + "return_date = '' " + "ORDER BY checkout_date DESC;";
@@ -645,9 +659,36 @@ public class JavaSQL {
         checkDate = checkDate && sdf.parse(dateToCheck).after(sdf.parse(startDate));
         if(checkDate){
           hasResult = true;
-          System.out.println("| " + rs_unreturn.getString("user_id") + " | " + rs_unreturn.getString("call_number") + " | " + rs_unreturn.getString("copy_number") + " | " + dateToCheck + " | ");
+          resultsInRange[returnCount][0] = rs_unreturn.getString("user_id");
+          resultsInRange[returnCount][1] = rs_unreturn.getString("call_number");
+          resultsInRange[returnCount][2] = rs_unreturn.getString("copy_number");
+          resultsInRange[returnCount][3] = dateToCheck;
+          returnCount += 1;
         }
       }
+      SimpleDateFormat checker = new SimpleDateFormat("dd/MM/yyyy");
+      for(int i=0; i<returnCount; i++){
+        for(int j=i+1; j<returnCount; j++){
+          if(checker.parse(resultsInRange[i][3]).before(checker.parse(resultsInRange[j][3]))){
+            String[] temp = new String[4];
+            temp[0] = resultsInRange[i][0];
+            temp[1] = resultsInRange[i][1];
+            temp[2] = resultsInRange[i][2];
+            temp[3] = resultsInRange[i][3];
+            resultsInRange[i][0] = resultsInRange[j][0];
+            resultsInRange[i][1] = resultsInRange[j][1];
+            resultsInRange[i][2] = resultsInRange[j][2];
+            resultsInRange[i][3] = resultsInRange[j][3];
+            resultsInRange[j][0] = temp[0];
+            resultsInRange[j][1] = temp[1];
+            resultsInRange[j][2] = temp[2];
+            resultsInRange[j][3] = temp[3];
+          }
+        }
+      }
+      for(int i=0; i<returnCount; i++)
+      System.out.println("| " + resultsInRange[i][0] + " | " + resultsInRange[i][1] + " | " + resultsInRange[i][2] + " | " + resultsInRange[i][3] + " | ");
+
       if(!hasResult){
         System.out.println("[Error]: No matching data from the above criteria!!");
       }
