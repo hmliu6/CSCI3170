@@ -11,9 +11,12 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Date;
 
-import java.text.SimpleDateFormat;
 import java.text.DateFormat;
-
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 
 public class JavaSQL {
     public static void main(String[] args) {
@@ -299,7 +302,10 @@ public class JavaSQL {
         pstmt.setString(2, result[0]);
         pstmt.setString(3, result[1]);
         pstmt.setString(4, result[3]);
-        pstmt.setString(5, result[4]);
+        if(result[4].equals("null"))
+          pstmt.setString(5, "");
+        else
+          pstmt.setString(5, result[4]);
 
         pstmt.execute();
       }
@@ -557,37 +563,36 @@ public class JavaSQL {
         pstmt_check.setInt(2, copy_number);
         ResultSet rs_check = pstmt_check.executeQuery();
 
-      /* If the result is empty, borrow the book, otherwise do nothing and show message */
-      if(!rs_check.next()){
-        /* Borrow the book */
-        String sqlStatement_borrow;
-        PreparedStatement pstmt_borrow;
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-        /* Insert record */
-        sqlStatement_borrow = "INSERT INTO checkout_record (call_number, copy_number, user_id, checkout_date, return_date) VALUES (?, ?, ?, ?, NULL)";
-        pstmt_borrow = conn.prepareStatement(sqlStatement_borrow);
-        pstmt_borrow.setString(1, call_number);
-        pstmt_borrow.setInt(2, copy_number);
-        pstmt_borrow.setString(3, userID);
-        pstmt_borrow.setString(4, dateFormat.format(date));
+        /* If the result is empty, borrow the book, otherwise do nothing and show message */
+        if(!rs_check.next()){
+          /* Borrow the book */
+          String sqlStatement_borrow;
+          PreparedStatement pstmt_borrow;
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+          LocalDate localDate = LocalDate.now();
+          /* Insert record */
+          sqlStatement_borrow = "INSERT INTO checkout_record (call_number, copy_number, user_id, checkout_date, return_date) VALUES (?, ?, ?, ?, '')";
+          pstmt_borrow = conn.prepareStatement(sqlStatement_borrow);
+          pstmt_borrow.setString(1, call_number);
+          pstmt_borrow.setInt(2, copy_number);
+          pstmt_borrow.setString(3, userID);
+          pstmt_borrow.setString(4, dtf.format(localDate));
 
-        /* execute SQL */
-        if(pstmt_borrow.execute()){
+          /* execute SQL */
+          pstmt_borrow.execute();
           /* Informative message of successfully checkout */
           System.out.println("Book checkout performed successfully!!" );
-        }else{
-          System.out.println("Book checkout failed to perform!!" );
         }
-      }else{
-        /* The book has been borrowed! */
-        System.out.println("[Error]: The Book (Call Number: "+ call_number+" , Copy Number: "+copy_number+") has been borrowed!" );
+        else{
+          /* The book has been borrowed! */
+          System.out.println("[Error]: The Book (Call Number: "+ call_number+" , Copy Number: "+copy_number+") has been borrowed!" );
+        }
       }
-    }catch (Exception exp){
+    catch (Exception exp){
+      System.out.println("Book checkout failed to perform!!" );
       System.out.println("Error: " + exp);
     }
-
-    }
+  }
 
     /* librarian function 2 : book returning */
     public static void bookReturning(Connection conn){
@@ -612,7 +617,7 @@ public class JavaSQL {
                          "user_id = ? AND "+
                          "call_number = ? AND " +
                          "copy_number = ? AND " +
-                         "return_date == NULL;";
+                         "return_date = ''";
       pstmt_check = conn.prepareStatement(sqlStatement_check);
       pstmt_check.setString(1, userID);
       pstmt_check.setString(2, call_number);
@@ -624,32 +629,31 @@ public class JavaSQL {
         /* return the book */
         String sqlStatement_return;
         PreparedStatement pstmt_return;
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate localDate = LocalDate.now();
         /* Update table */
         sqlStatement_return = "UPDATE checkout_record "+
                             "SET return_date = ? "+
                             "WHERE user_id = ? AND "+
                             "call_number = ? AND "+
-                            "copy_number = ?;";
+                            "copy_number = ?";
         pstmt_return = conn.prepareStatement(sqlStatement_return);
-        pstmt_return.setString(1, dateFormat.format(date));
+        pstmt_return.setString(1, dtf.format(localDate));
         pstmt_return.setString(2, userID);
         pstmt_return.setString(3, call_number);
         pstmt_return.setInt(4, copy_number);
 
         /* execute SQL */
-        if(pstmt_return.execute()){
-          /* Informative message of successfully checkout */
-          System.out.println("Book returning performed successfull!!!" );
-        }else{
-          System.out.println("Book returning failed to perform!!" );
-        }
-      }else{
+        pstmt_return.execute();
+        /* Informative message of successfully checkout */
+        System.out.println("Book returning performed successfully!!!" );
+      }
+      else{
         /* The book has been return or some reason we cannot find the record! */
         System.out.println("[Error]: Cannot found such record!" );
       }
     }catch (Exception exp){
+      System.out.println("Book returning failed to perform!!" );
       System.out.println("Error: " + exp);
     }}
 
@@ -659,9 +663,9 @@ public class JavaSQL {
       String startDate;
       String endDate;
       Scanner scan = new Scanner(System.in);
-      System.out.print("Type in the starting date [dd/mm/YYYY]: ");
+      System.out.print("Type in the starting date [DD/MM/YYYY]: ");
       startDate = scan.nextLine();
-      System.out.print("Type in the ending date [dd/mm/YYYY]: ");
+      System.out.print("Type in the ending date [DD/MM/YYYY]: ");
       endDate = scan.nextLine();
 
       /* Get unreturn data 
