@@ -528,12 +528,12 @@ public class JavaSQL {
     PreparedStatement pstmt_check;
     try {
       sqlStatement_check = "SELECT * FROM " + "checkout_record WHERE " + "call_number = ? AND " + "copy_number = ? AND "
-          + "return_date <> NULL;";
+          + "return_date = ''";
       pstmt_check = conn.prepareStatement(sqlStatement_check);
       pstmt_check.setString(1, call_number);
       pstmt_check.setInt(2, copy_number);
       ResultSet rs_check = pstmt_check.executeQuery();
-
+      
       /* If the result is empty, borrow the book, otherwise do nothing and show message */
       if (!rs_check.next()) {
         /* Borrow the book */
