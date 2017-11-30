@@ -402,7 +402,7 @@ public class JavaSQL {
                          "book.call_number = copy.call_number AND " + 
                          "book.call_number = author.call_number AND " + 
                          "author.call_number = copy.call_number AND " +
-                         "book.title LIKE ?";
+                         "book.title LIKE BINARY ?";
           pstmt = conn.prepareStatement(sqlStatement);
           searchKey = "%" + searchKey + "%";
           pstmt.setString(1, searchKey);
@@ -414,7 +414,7 @@ public class JavaSQL {
                          "book.call_number = copy.call_number AND " + 
                          "book.call_number = author.call_number AND " + 
                          "author.call_number = copy.call_number AND " +
-                         "author.name LIKE ?";
+                         "author.name LIKE BINARY ?";
           pstmt = conn.prepareStatement(sqlStatement);
           searchKey = "%" + searchKey + "%";
           pstmt.setString(1, searchKey);
@@ -465,7 +465,6 @@ public class JavaSQL {
                        "author.call_number = copy.call_number AND " +
                        "checkout_record.call_number = book.call_number AND " + 
                        "checkout_record.user_id = ?";
-        System.out.println(sqlStatement);
         pstmt = conn.prepareStatement(sqlStatement);
         pstmt.setString(1, userID);
 
