@@ -19,9 +19,9 @@ public class JavaSQL {
     public static void main(String[] args) {
         // TODO code application logic here
         Connection conn = null;
-        String url = "jdbc:mysql://localhost:3306";
-        String username = "root";
-        String password = "test";
+        String url = "jdbc:mysql://appsrvdb.cse.cuhk.edu.hk/CSCI3170S10";
+        String username = "CSCI3170S10";
+        String password = "csci3170Project!";
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(url, username, password);
@@ -103,126 +103,122 @@ public class JavaSQL {
       System.out.println("Create ALl Table...\n");
       System.out.println("Processing...\n");
       try{
-      String sqlStatement_create_category;
-      PreparedStatement pstmt_create_category;
+        String sqlStatement_create_category;
+        PreparedStatement pstmt_create_category;
 
-      /* create table: category */
-      sqlStatement_create_category = "CREATE TABLE category("+
-      "id integer primary key,"+
-      "max_books integer not null,"+
-      "loan_period integer not null);";
+        /* create table: category */
+        sqlStatement_create_category = "CREATE TABLE category("+
+        "id integer primary key,"+
+        "max_books integer not null,"+
+        "loan_period integer not null);";
 
-      pstmt_create_category = conn.prepareStatement(sqlStatement_create_category);
-      /* execute SQL */
-      if(pstmt_create_category.execute()){
-        /* Informative message of successfully creation */
-        System.out.println("Table: category created successfully!!!" );
-      }else{
-        System.out.println("Fail to create table: category" );
-      }
+        pstmt_create_category = conn.prepareStatement(sqlStatement_create_category);
+        /* execute SQL */
+        if(pstmt_create_category.execute()){
+          /* Informative message of successfully creation */
+          System.out.println("Table: category created successfully!!!" );
+        }else{
+          System.out.println("Fail to create table: category" );
+        }
 
-      /* create table: user */
-      String sqlStatement_create_user;
-      PreparedStatement pstmt_create_user;
+        /* create table: user */
+        String sqlStatement_create_user;
+        PreparedStatement pstmt_create_user;
 
-      sqlStatement_create_user = "CREATE TABLE user("+
-      "user_id varchar(10) primary key,"+
-      "name varchar(25) not null,"+
-      "address varchar(100) not null,"+
-      "category_id integer not null,"+
-      "FOREIGN KEY(category_id) REFERENCES category(id));";
+        sqlStatement_create_user = "CREATE TABLE user("+
+        "user_id varchar(10) primary key,"+
+        "name varchar(25) not null,"+
+        "address varchar(100) not null,"+
+        "category_id integer not null,"+
+        "FOREIGN KEY(category_id) REFERENCES category(id));";
 
-      pstmt_create_user = conn.prepareStatement(sqlStatement_create_user);
-      /* execute SQL */
-      if(pstmt_create_user.execute()){
-        /* Informative message of successfully creation */
-        System.out.println("Table: user created successfully!!!" );
-      }else{
-        System.out.println("Fail to create table: user" );
-      }
+        pstmt_create_user = conn.prepareStatement(sqlStatement_create_user);
+        /* execute SQL */
+        if(pstmt_create_user.execute()){
+          /* Informative message of successfully creation */
+          System.out.println("Table: user created successfully!!!" );
+        }else{
+          System.out.println("Fail to create table: user" );
+        }
 
-      /* create table: book */
-      String sqlStatement_create_book;
-      PreparedStatement pstmt_create_book;
+        /* create table: book */
+        String sqlStatement_create_book;
+        PreparedStatement pstmt_create_book;
 
-      sqlStatement_create_book = "CREATE TABLE book("+
-      "call_number varchar(8) primary key,"+
-      "title varchar(30) not null,"+
-      "publish_date varchar(10) not null);";
+        sqlStatement_create_book = "CREATE TABLE book("+
+        "call_number varchar(8) primary key,"+
+        "title varchar(30) not null,"+
+        "publish_date varchar(10) not null);";
 
-      pstmt_create_book = conn.prepareStatement(sqlStatement_create_book);
-      /* execute SQL */
-      if(pstmt_create_book.execute()){
-        /* Informative message of successfully creation */
-        System.out.println("Table: book created successfully!!!" );
-      }else{
-        System.out.println("Fail to create table: book" );
-      }
+        pstmt_create_book = conn.prepareStatement(sqlStatement_create_book);
+        /* execute SQL */
+        if(pstmt_create_book.execute()){
+          /* Informative message of successfully creation */
+          System.out.println("Table: book created successfully!!!" );
+        }else{
+          System.out.println("Fail to create table: book" );
+        }
 
-      /* create table: author */
-      String sqlStatement_create_author;
-      PreparedStatement pstmt_create_author;
+        /* create table: author */
+        String sqlStatement_create_author;
+        PreparedStatement pstmt_create_author;
 
-      sqlStatement_create_author = "CREATE TABLE author("+
-      "name varchar(25) not null,"+
-      "call_number varchar(8) not null,"+
-      "PRIMARY KEY(name, call_number),"+
-      "FOREIGN KEY(call_number) REFERENCES book(call_number));";
+        sqlStatement_create_author = "CREATE TABLE author("+
+        "name varchar(25) not null,"+
+        "call_number varchar(8) not null,"+
+        "PRIMARY KEY(name, call_number),"+
+        "FOREIGN KEY(call_number) REFERENCES book(call_number));";
 
-      pstmt_create_author = conn.prepareStatement(sqlStatement_create_author);
-      /* execute SQL */
-      if(pstmt_create_author.execute()){
-        /* Informative message of successfully creation */
-        System.out.println("Table: author created successfully!!!" );
-      }else{
-        System.out.println("Fail to create table: author" );
-      }
+        pstmt_create_author = conn.prepareStatement(sqlStatement_create_author);
+        /* execute SQL */
+        if(pstmt_create_author.execute()){
+          /* Informative message of successfully creation */
+          System.out.println("Table: author created successfully!!!" );
+        }else{
+          System.out.println("Fail to create table: author" );
+        }
 
-      /* create table: copy */
-      String sqlStatement_create_copy;
-      PreparedStatement pstmt_create_copy;
+        /* create table: copy */
+        String sqlStatement_create_copy;
+        PreparedStatement pstmt_create_copy;
 
-      sqlStatement_create_copy = "CREATE TABLE book("+
-      "call_number varchar(8) primary key,"+
-      "title varchar(30) not null,"+
-      "publish_date varchar(10) not null);";
+        sqlStatement_create_copy = "CREATE TABLE book("+
+        "call_number varchar(8) primary key,"+
+        "title varchar(30) not null,"+
+        "publish_date varchar(10) not null);";
 
-      pstmt_create_copy = conn.prepareStatement(sqlStatement_create_copy);
-      /* execute SQL */
-      if(pstmt_create_copy.execute()){
-        /* Informative message of successfully creation */
-        System.out.println("Table: copy created successfully!!!" );
-      }else{
-        System.out.println("Fail to create table: copy" );
-      }
+        pstmt_create_copy = conn.prepareStatement(sqlStatement_create_copy);
+        /* execute SQL */
+        if(pstmt_create_copy.execute()){
+          /* Informative message of successfully creation */
+          System.out.println("Table: copy created successfully!!!" );
+        }else{
+          System.out.println("Fail to create table: copy" );
+        }
 
-      /* create table: checkout_record */
-      String sqlStatement_create_checkout_record;
-      PreparedStatement pstmt_create_checkout_record;
+        /* create table: checkout_record */
+        String sqlStatement_create_checkout_record;
+        PreparedStatement pstmt_create_checkout_record;
 
-      sqlStatement_create_checkout_record = "CREATE TABLE checkout_record("+
-      "user_id varchar(10) not null,"+
-      "call_number varchar(8) not null,"+
-      "copy_number integer not null,"+
-      "checkout_date varchar(10) not null,"+
-      "return_date varchar(10),"+
-      "PRIMARY KEY(user_id, call_number, copy_number, checkout_date),"+
-      "FOREIGN KEY(user_id) REFERENCES user(user_id),"+
-      "FOREIGN KEY(call_number, copy_number) REFERENCES copy(call_number, copy_number));";
-      
-      pstmt_create_checkout_record = conn.prepareStatement(sqlStatement_create_checkout_record);
-      /* execute SQL */
-      if(pstmt_create_checkout_record.execute()){
-        /* Informative message of successfully creation */
-        System.out.println("Table: checkout_record created successfully!!!" );
-      }else{
-        System.out.println("All Table created successfully!!!" );
-      }
-
-
-      
-      System.out.println("Fail to create table: checkout_record" );  
-
+        sqlStatement_create_checkout_record = "CREATE TABLE checkout_record("+
+        "user_id varchar(10) not null,"+
+        "call_number varchar(8) not null,"+
+        "copy_number integer not null,"+
+        "checkout_date varchar(10) not null,"+
+        "return_date varchar(10),"+
+        "PRIMARY KEY(user_id, call_number, copy_number, checkout_date),"+
+        "FOREIGN KEY(user_id) REFERENCES user(user_id),"+
+        "FOREIGN KEY(call_number, copy_number) REFERENCES copy(call_number, copy_number));";
+        
+        pstmt_create_checkout_record = conn.prepareStatement(sqlStatement_create_checkout_record);
+        /* execute SQL */
+        if(pstmt_create_checkout_record.execute())
+          /* Informative message of successfully creation */
+          System.out.println("Table: checkout_record created successfully!!!" );
+        else
+          System.out.println("All Table created successfully!!!" );
+        
+        System.out.println("Fail to create table: checkout_record" );  
       }
       catch(Exception ex){
         System.out.println("Error: " + ex);
@@ -342,14 +338,14 @@ public class JavaSQL {
     public static void dropAllTable(Connection conn){
       System.out.println("Processing...");
       String[] tables = {"category", "user", "book", "copy", "checkout_record", "author"};
-      String sqlStatement = "DROP DATABASE IF EXISTS  ";
+      String sqlStatement = "DROP TABLE IF EXISTS  ";
       try{
         for(int i=0; i<tables.length; i++){
           String temp = sqlStatement + tables[i];
           PreparedStatement pstmt = conn.prepareStatement(temp);
-          ResultSet rs = pstmt.executeQuery();
+          ResultSet rs = pstmt.executeUpdate();
         }
-        System.out.println("Done! Database is removed!");
+        System.out.println("Done! Tables are removed!");
       }
       catch (Exception ex){
         System.out.println("Error: " + ex);
