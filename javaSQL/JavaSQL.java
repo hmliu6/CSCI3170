@@ -28,8 +28,8 @@ public class JavaSQL {
             Statement dropDatabase = conn.createStatement();
             Statement createDatavase = conn.createStatement();
             Statement stmt = conn.createStatement();
-            // dropDatabase.executeUpdate("DROP DATABASE IF EXISTS project;");
-            // createDatavase.executeUpdate("CREATE DATABASE project;");
+            dropDatabase.executeUpdate("DROP DATABASE IF EXISTS project;");
+            createDatavase.executeUpdate("CREATE DATABASE project;");
             stmt.executeUpdate("use project;");
             main_menu(conn);
             conn.close();
@@ -109,8 +109,8 @@ public class JavaSQL {
       /* create table: category */
       sqlStatement_create_category = "CREATE TABLE category("+
       "id integer primary key,"+
-      "loan_period integer not null,"+
-      "max_books integer not null);";
+      "max_books integer not null,"+
+      "loan_period integer not null);";
 
       pstmt_create_category = conn.prepareStatement(sqlStatement_create_category);
       /* execute SQL */
@@ -253,12 +253,12 @@ public class JavaSQL {
       File file = new File(path + "/" + "category.txt");
       Scanner scan = new Scanner(file);
 
-      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, loan_period, max_books) VALUES (?, ?, ?)");
+      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category (id, max_books, loan_period) VALUES (?, ?, ?)");
       while (scan.hasNextLine()){
         String data = scan.nextLine();
         String[] result = data.split("\t");
         for(int i=0; i<result.length; i++)
-          pstmt.setString(i+1, result[0]);
+          pstmt.setString(i+1, result[i]);
       }
       pstmt.execute();
       System.out.println("Data of Category have been loaded successfully!\n");
@@ -275,7 +275,7 @@ public class JavaSQL {
         String data = scan.nextLine();
         String[] result = data.split("\t");
         for(int i=0; i<result.length; i++)
-          pstmt.setString(i+1, result[0]);
+          pstmt.setString(i+1, result[i]);
       }
       pstmt.execute();
       System.out.println("Data of User have been loaded successfully!\n");
@@ -298,7 +298,7 @@ public class JavaSQL {
         String[] nameList = author.split(",");
         try{
           for(int i=0; i<nameList.length; i++){
-            ps_author.setString(1, nameList[0]);
+            ps_author.setString(1, nameList[i]);
             ps_author.setString(2, result[0]);
             ps_author.execute();
           }
